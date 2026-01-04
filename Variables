@@ -1,0 +1,142 @@
+Que 1. What is a Variable?
+Ans 1. A variable is a named memory location used to store a value.
+Go is a statically typed language: Type is known at compile time, not runtime.
+
+Variable Declaration Methods: Package-level variables
+1. var keyword (explicit type)
+var age int
+age = 25
+
+var age int = 25
+
+2. Type inference with var : Compiler infers type → string
+var age = 25
+
+3. Short declaration := (MOST USED)
+age := 25
+Rules: 
+  1. Only inside functions
+  2. Cannot be used at package level
+  3. Must declare at least one new variable
+
+Invalid: 
+    age := 30 // if age already exists in same scope
+Valid:
+    age, salary := 30, 50000
+
+4. Multiple Variable Declaration
+    var a, b, c int = 1, 2, 3
+    x, y := 10, "hello"
+
+5. Block Declaration (Recommended):  Clean & production-friendly 
+    var (
+    name string = "Go"
+    age  int    = 10
+    isGo bool   = true
+)
+
+## Zero Values (🔥 VERY IMPORTANT)
+    If you declare a variable but don’t initialize it, Go assigns a zero value.
+    | Type    | Zero Value        |
+    |-------- |------------------ |
+    | int     | `0`               |
+    | float  | `0.0`             |
+    | bool   | `false`           |
+    | string | `""` (empty)      |
+    | pointer| `nil`             |
+    | slice  | `nil`             |
+    | map    | `nil`             |
+    | struct | fields zeroed     |
+    var x int
+    fmt.Println(x) // 0
+
+-Does Go have uninitialized variables?
+-No. Every variable has a default zero value.
+    
+Que 2. Why := is not allowed outside function?
+Ans 2. Because it requires runtime context; package-level variables must be resolved at compile time.
+
+# Data Types in Go
+  ## Basic Data Types
+  - Integers
+  int, int8, int16, int32, int64
+  uint, uint8, uint16, uint32, uint64
+
+  int size depends on architecture:
+    32-bit system → 4 bytes
+    64-bit system → 8 bytes
+
+  - Why use int64 instead of int?
+  - For portability & large values (DB IDs, timestamps)
+
+  - Floating Point
+    float32, float64
+  Default float type = float64
+  x := 3.14 // float64
+
+  - Boolean
+    var isActive bool = true
+    Go does not allow:
+    if 1 { } // ❌ invalid
+
+    Must be boolean:
+      if isActive { }
+  
+  - Strings
+      var name string = "GoLang"
+      Strings are immutable:
+        name[0] = 'G' // ❌ compile error
+      Use []byte or []rune to modify
+
+Que 3. Difference between var and :=
+Ans 3. var is used for explicit or package-level variable declarations and supports zero values,
+  while := is a shorthand declaration used inside functions that requires initialization and at least one new variable.
+
+  -  Scope Rules
+    var → Works everywhere
+    ```package main
+
+      var x = 10 // ✅ allowed
+      
+      func main() {
+          var y = 20
+      }```
+
+    := → Function scope only
+    x := 10 // ❌ compile-time error
+    Reason - Package-level variables must be resolved at compile time.
+
+  - Zero Value Behavior
+    var x int
+    fmt.Println(x) // 0
+
+    x := 0 // must initialize
+    := cannot declare variable without value.
+
+  - Redeclaration Rules (VERY IMPORTANT)
+     - Invalid:
+        x := 10
+        x := 20
+     - Valid (at least one new variable)
+        x := 10
+        x, y := 20, 30 // Left side must contain at least one new variable.
+  
+  - Variable Shadowing (TRICKY)
+    ```x := 10
+      if true {
+          x := 20
+      }
+      fmt.Println(x) // 10
+  ```
+        Inner x shadows outer x.
+        Avoid shadowing in production code
+
+  - Type Declaration
+        var a int = 10
+
+
+
+
+
+
+  

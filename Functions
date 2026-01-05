@@ -1,0 +1,155 @@
+What is a Function?
+A function is a block of code that performs a specific task and can be reused.
+
+func add(a int, b int) int {
+    return a + b
+}
+✔ func keyword
+✔ Return type after parameters
+
+- Multiple Return Values (VERY IMPORTANT)
+  Go supports returning multiple values.
+  func divide(a, b int) (int, int) {
+      return a / b, a % b
+  }
+  
+  q, r := divide(10, 3)
+
+Ignoring Return Values:
+  q, _ := divide(10, 3)
+
+- Common Use Case (ERROR HANDLING)
+  value, err := getData()
+
+- Named Return Values
+  func sum(a, b int) (result int) {
+    result = a + b
+    return
+}
+
+- Variadic Functions
+A function that accepts variable number of arguments.
+func sum(nums ...int) int {
+    total := 0
+    for _, n := range nums {
+        total += n
+    }
+    return total
+}
+
+sum(1, 2, 3)
+
+- Passing Slice to Variadic Function
+nums := []int{1, 2, 3}
+sum(nums...)
+📌 ... spreads slice
+
+- Rules of Variadic Functions
+  Only one variadic parameter
+  Must be last parameter
+
+- Anonymous Functions
+  func() {
+    fmt.Println("Hello")
+}()
+✔ No name
+✔ Can be immediately executed
+
+*-*-*- Closures (VERY IMPORTANT)
+What is a Closure?
+A closure is a function that captures variables from its outer scope.
+
+func counter() func() int {
+    count := 0
+    return func() int {
+        count++
+        return count
+    }
+}
+
+c := counter()
+fmt.Println(c()) // 1
+fmt.Println(c()) // 2
+count is remembered between calls.
+
+*-*-* Closure Interview Trap:
+func main() {
+    funcs := []func(){}
+    for i := 0; i < 3; i++ {
+        funcs = append(funcs, func() {
+            fmt.Println(i)
+        })
+    }
+    for _, f := range funcs {
+        f()
+    }
+}
+
+❌ Output:3
+3
+3
+
+✔ Fix:
+
+for i := 0; i < 3; i++ {
+    i := i
+    funcs = append(funcs, func() {
+        fmt.Println(i)
+    })
+}
+
+- Functions as Parameters
+
+func operate(a int, b int, fn func(int, int) int) int {
+    return fn(a, b)
+}
+
+- Returning Functions
+  func multiplier(x int) func(int) int {
+      return func(y int) int {
+          return x * y
+      }
+  }
+
+- Defer with Functions *-*-*-*-**-
+  func test() {
+      defer fmt.Println("World")
+      fmt.Println("Hello")
+  }
+o/p Hello
+World
+📌 Deferred functions run last
+
+-- Parameter Passing (INTERVIEW)
+All parameters are passed by value
+Slices, maps, pointers → reference behavior
+
+Multiple Return Values
+Go functions can return multiple values, commonly used for returning results and errors.
+
+Variadic Function
+A variadic function accepts a variable number of arguments using ...
+
+Closure
+A closure is a function that captures and remembers variables from its surrounding scope.
+
+Quick Memory Points
+  func keyword
+  Multiple returns supported
+  _ ignores value
+  Variadic uses ...
+  Closure remembers state
+
+
+
+
+
+
+
+
+
+
+
+
+
+

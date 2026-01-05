@@ -1,0 +1,197 @@
+1️⃣ What are Generics?
+Generics allow you to write type-safe, reusable code that works with multiple types.
+📌 Introduced in Go 1.18
+
+2️⃣ Why Generics Were Needed?
+
+Before generics:
+Code duplication
+interface{} + type assertions
+Runtime errors
+Generics solve this at compile time.
+
+3️⃣ Basic Generic Function
+func Print[T any](value T) {
+    fmt.Println(value)
+}
+
+Usage:
+Print
+Print("Go")
+✔ Type inference works
+
+4️⃣ Type Parameters Syntax
+[T any]
+
+T → type parameter
+any → alias for interface{}
+
+5️⃣ Generic with Multiple Types
+func Pair[A any, B any](a A, b B) {
+    fmt.Println(a, b)
+}
+
+6️⃣ Constraints (VERY IMPORTANT)
+Using constraints package
+
+import "golang.org/x/exp/constraints"
+
+func Sum[T constraints.Integer](a, b T) T {
+    return a + b
+}
+✔ Restricts allowed types
+
+7️⃣ Custom Constraints (INTERVIEW FAVORITE)
+type Number interface {
+    int | int64 | float64
+}
+
+func Add[T Number](a, b T) T {
+    return a + b
+}
+✔ Union types
+
+8️⃣ Comparable Constraint
+func Equal[T comparable](a, b T) bool {
+    return a == b
+}
+📌 comparable is built-in
+
+9️⃣ Generic Struct
+type Box[T any] struct {
+    Value T
+}
+
+Usage:
+b := Box[int]{Value: 10}
+
+🔟 Generic Methods (TRICKY)
+type Stack[T any] struct {
+    items []T
+}
+
+func (s *Stack[T]) Push(v T) {
+    s.items = append(s.items, v)
+}
+📌 Methods use the same type parameter
+
+1️⃣1️⃣ Generic Interface (LIMITED)
+
+type Store[T any] interface {
+    Save(T)
+}
+✔ Allowed
+❌ Cannot have type parameters on methods alone
+
+1️⃣2️⃣ Type Inference (IMPORTANT)
+Add(10, 20)   // compiler infers T = int
+✔ Explicit type often unnecessary
+
+1️⃣3️⃣ Underlying Type (~) (ADVANCED)
+type MyInt int
+
+type Number interface {
+    ~int | ~int64
+}
+✔ Accepts custom types
+
+1️⃣4️⃣ Generic Slice Helpers (COMMON)
+func Map[T any, R any](s []T, fn func(T) R) []R {
+    r := make([]R, len(s))
+    for i, v := range s {
+        r[i] = fn(v)
+    }
+    return r
+}
+
+1️⃣5️⃣ Generics vs Interfaces (INTERVIEW)
+Generics	                Interfaces
+Compile-time	            Runtime
+Type-safe	                Dynamic
+Data structures	          Behavior
+📌 Use both together
+
+1️⃣6️⃣ What Generics CANNOT Do (TRAPS)
+❌ No operator overloading
+❌ No specialization
+❌ No generic constants
+❌ No higher-kinded types
+
+1️⃣7️⃣ Zero Value of Type Parameter
+var zero T
+✔ Works for any type
+
+1️⃣8️⃣ Performance (INTERVIEW)
+✔ No boxing
+✔ No reflection
+✔ Near hand-written code speed
+
+📌 Generics are monomorphized
+
+1️⃣9️⃣ When to Use Generics?
+
+✔ Data structures
+✔ Algorithms
+✔ Utilities
+✔ Libraries
+
+2️⃣0️⃣ When NOT to Use Generics?
+
+❌ Single type
+❌ Behavior-based logic
+❌ Premature abstraction
+
+2️⃣1️⃣ Common Interview Traps
+
+❌ Overusing generics
+❌ Using any instead of constraints
+❌ Forgetting ~ for custom types
+❌ Confusing generics with interfaces
+
+Generics
+Generics allow writing reusable, type-safe code using type parameters evaluated at compile time.
+
+Constraints
+Constraints restrict the set of types allowed for a type parameter.
+
+🧠 Quick Memory Points
+[T any]
+Constraints = type sets
+comparable
+~ for underlying types
+Compile-time safety
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

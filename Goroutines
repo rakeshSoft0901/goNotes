@@ -1,0 +1,164 @@
+1️⃣ What is a Goroutine?
+A goroutine is a lightweight thread managed by the Go runtime.
+
+go doWork()
+📌 Runs concurrently, not necessarily in parallel.
+
+2️⃣ Goroutine vs Thread (INTERVIEW)
+Goroutine	                            OS Thread
+Very lightweight (~2KB stack)	        Heavy (~1MB)
+Managed by Go runtime            	    Managed by OS
+Millions possible	                    Limited
+Fast context switch	                  Slow
+
+3️⃣ How to Start a Goroutine
+go func() {
+    fmt.Println("Hello")
+}()
+
+4️⃣ Main Goroutine Rule (VERY IMPORTANT)
+func main() {
+    go fmt.Println("Hello")
+}
+❌ Output may not appear
+📌 Program exits when main goroutine exits
+✔ Fix using sync tools (WaitGroup, channel)
+
+5️⃣ Goroutine with Function Parameters (TRAP)
+for i := 0; i < 3; i++ {
+    go func() {
+        fmt.Println(i)
+    }()
+}
+
+❌ Output: 3 3 3
+
+✔ Correct:
+for i := 0; i < 3; i++ {
+    go func(i int) {
+        fmt.Println(i)
+    }(i)
+}
+
+6️⃣ Goroutines & Closures (INTERVIEW FAVORITE)
+📌 Goroutines capture variables, not values.
+
+7️⃣ Goroutines are Asynchronous
+go task1()
+task2()
+✔ No execution order guarantee.
+
+8️⃣ Synchronization Problem
+count := 0
+go func() { count++ }()
+go func() { count++ }()
+
+❌ Race condition
+✔ Use mutex or channel.
+
+9️⃣ WaitGroup (BASIC SYNC)
+var wg sync.WaitGroup
+
+wg.Add(1)
+go func() {
+    defer wg.Done()
+    fmt.Println("Done")
+}()
+wg.Wait()
+📌 Waits for goroutines to finish.
+
+🔟 Goroutine Panic (INTERVIEW)
+go func() {
+    panic("boom")
+}()
+❌ Crashes entire program
+✔ Recover must be inside same goroutine.
+
+1️⃣1️⃣ Goroutine Leak (IMPORTANT)
+go func() {
+    for {
+        // waiting forever
+    }
+}()
+
+❌ Goroutine never exits
+📌 Use context / channel to stop.
+
+1️⃣2️⃣ Anonymous vs Named Goroutine
+go worker()
+
+Anonymous:
+go func() {}()
+✔ Both valid.
+
+1️⃣3️⃣ Communication Rule (GO PROVERB)
+Do not communicate by sharing memory; share memory by communicating
+✔ Use channels, not mutex where possible.
+
+1️⃣4️⃣ When Goroutines Run in Parallel?
+Multiple CPU cores
+GOMAXPROCS > 1
+
+runtime.GOMAXPROCS(4)
+
+1️⃣5️⃣ Goroutine Scheduling (INTERVIEW)
+Go uses M:N scheduling:
+M goroutines
+N OS threads
+
+1️⃣6️⃣ Common Goroutine Patterns
+✔ Fan-out / fan-in
+✔ Worker pool
+✔ Pipeline
+
+1️⃣7️⃣ Goroutine Best Practices
+
+✔ Keep goroutines short-lived
+✔ Always provide exit path
+✔ Use WaitGroup or channels
+✔ Avoid shared state
+
+1️⃣8️⃣ Common Interview Traps
+
+❌ Assuming order of execution
+❌ Forgetting to wait
+❌ Closure variable bug
+❌ Panic inside goroutine
+
+Goroutine
+A goroutine is a lightweight thread managed by the Go runtime for concurrent execution.
+
+Concurrency vs Parallelism
+Concurrency is structuring programs to handle multiple tasks, parallelism is executing tasks simultaneously.
+
+🧠 Quick Memory Points
+go keyword
+Lightweight
+Asynchronous
+Main exits → all exit
+Closure trap
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

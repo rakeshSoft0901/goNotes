@@ -1,0 +1,196 @@
+What is an Enum?
+An enum is a set of named constant values.
+
+📌 In Go → enums are implemented using:
+const
+custom type
+iota
+
+2️⃣ Basic Enum Pattern (STANDARD WAY)
+
+type Status int
+const (
+    Pending Status = iota
+    Approved
+    Rejected
+)
+
+✔ iota starts from 0
+✔ Increments automatically
+
+3️⃣ Why Use Custom Type? (INTERVIEW)
+❌ Bad
+const Pending = 0
+type Status int
+✔ Type safety
+✔ Better readability
+✔ Compiler checks
+
+4️⃣ Enum Values
+fmt.Println(Pending)  // 0
+fmt.Println(Approved) // 1
+
+5️⃣ Enum with Explicit Values
+const (
+    Low Status = 1
+    Medium Status = 5
+    High Status = 10
+)
+
+6️⃣ Enum Starting from 1
+const (
+    _ Status = iota
+    Read
+    Write
+    Execute
+)
+📌 _ skips zero value
+
+7️⃣ String Enums (VERY IMPORTANT)
+Go enums are numbers by default.
+For readable output, implement String().
+
+func (s Status) String() string {
+    return [...]string{"Pending", "Approved", "Rejected"}[s]
+}
+fmt.Println(Pending) // Pending
+
+8️⃣ Safer String Method (INTERVIEW)
+func (s Status) String() string {
+    switch s {
+    case Pending:
+        return "Pending"
+    case Approved:
+        return "Approved"
+    case Rejected:
+        return "Rejected"
+    default:
+        return "Unknown"
+    }
+}
+✔ Prevents panic
+
+9️⃣ Enum Validation (IMPORTANT)
+func (s Status) IsValid() bool {
+    return s >= Pending && s <= Rejected
+}
+
+🔟 Enum in Switch
+switch status {
+case Pending:
+    fmt.Println("Waiting")
+case Approved:
+    fmt.Println("Success")
+}
+
+1️⃣1️⃣ Enum with Bit Flags (ADVANCED)
+type Permission int
+
+const (
+    Read Permission = 1 << iota
+    Write
+    Execute
+)
+Usage:
+perm := Read | Write
+
+Check:
+if perm&Read != 0 {}
+📌 Common in OS, permissions.
+
+1️⃣2️⃣ Enum with String Constants (ALTERNATIVE)
+type Status string
+
+const (
+    Pending Status = "PENDING"
+    Approved Status = "APPROVED"
+)
+✔ Human readable
+❌ Less type-safe operations
+
+1️⃣3️⃣ Enum JSON Marshaling (INTERVIEW)
+type Status int
+
+func (s Status) MarshalJSON() ([]byte, error) {
+    return json.Marshal(s.String())
+}
+
+1️⃣4️⃣ Zero Value Problem (INTERVIEW TRAP)
+var s Status
+✔ s == Pending (zero value)
+📌 Always define invalid zero if needed.
+
+1️⃣5️⃣ Common Interview Traps
+❌ Assuming Go has built-in enum
+❌ Forgetting custom type
+❌ Ignoring zero value
+❌ Unsafe String() indexing
+
+Enum in Go
+Go implements enums using const, custom types, and iota.
+
+iota
+iota is a counter that resets to zero in each const block.
+
+Why custom type?
+To provide type safety and prevent invalid assignments.
+
+🧠 Quick Memory Points
+No native enum
+Use const + type + iota
+Zero value matters
+Implement String()
+Validate enum values
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

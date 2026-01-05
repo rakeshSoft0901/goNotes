@@ -1,0 +1,134 @@
+What is a String?
+A string in Go is a read-only (immutable) sequence of bytes.
+
+s := "Hello"
+📌 Internally → UTF-8 encoded bytes
+
+/*/*/ String is Immutable (VERY IMPORTANT)
+s := "Go"
+s[0] = 'g' // ❌ compile error
+✔ You cannot modify string characters directly.
+
+*-* Length of String
+s := "Go"
+len(s) // 2
+len() returns number of bytes, NOT characters.
+
+- Bytes vs Characters (INTERVIEW TRAP)
+  s := "Gø"
+  fmt.Println(len(s)) // 3
+
+Why?
+  G → 1 byte
+  ø → 2 bytes (UTF-8)
+
+What is a Rune?
+A rune represents a Unicode character.
+
+var r rune = 'ø'
+rune = alias for int32
+
+- Single Quotes vs Double Quotes
+Quotes	Meaning
+'a'	rune
+"a"	string
+
+- Looping Over String (VERY IMPORTANT)
+❌ Wrong (byte-wise)  
+for i := 0; i < len(s); i++ {
+      fmt.Println(s[i])
+  }
+
+✅ Correct (rune-wise)
+for i, ch := range s {
+    fmt.Println(i, ch)
+}
+✔ range decodes UTF-8 into runes.
+
+- Convert String to Rune Slice
+  r := []rune("Gø")
+  fmt.Println(len(r)) // 2
+✔ Correct character count.
+
+
+- Modify String Using Runes
+    s := "Hello"
+    r := []rune(s)
+    r[0] = 'h'
+    s = string(r)
+✔ Correct way to modify string.
+
+- Convert String to Bytes
+b := []byte("Go")
+✔ Used for I/O, network, file operations.
+
+-*-** String Concatenation
+s := "Go" + "Lang"
+
+✔ Better:
+  var b strings.Builder
+  b.WriteString("Go")
+  b.WriteString("Lang")
+
+*-*-*-*-*-*-*-*-**- Common String Functions
+strings.ToUpper(s)
+strings.Contains(s, "Go")
+strings.Split(s, " ")
+strings.TrimSpace(s)
+
+////// Comparing Strings
+if s1 == s2 {
+    fmt.Println("Equal")
+}
+✔ Safe & fast.
+
+--- Zero Value of String
+var s string
+Zero value = "" (empty string)
+NOT nil
+
+- Rune and Unicode Example (INTERVIEW)
+s := "नमस्ते"
+fmt.Println(len(s))        // bytes
+fmt.Println(len([]rune(s))) // characters
+
+String vs Rune (Quick Table)
+
+String	                        =>  Rune
+Sequence of bytes	                  Unicode character
+Immutable	                          Value type
+Double quotes	                      Single quotes
+UTF-8 encoded	                      int32
+
+///// Common Interview Traps
+
+❌ Using len() for characters
+❌ Indexing Unicode string
+❌ Modifying string directly
+❌ Forgetting UTF-8 encoding
+
+String
+A string in Go is an immutable sequence of UTF-8 encoded bytes.
+
+Rune
+A rune is an alias for int32 and represents a Unicode code point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

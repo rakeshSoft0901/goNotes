@@ -136,6 +136,48 @@ Ans 3. var is used for explicit or package-level variable declarations and suppo
 
 
 
+- What is a Constant?
+- A constant is a value that cannot be changed after it is declared.
+const a = 10
+const name = "Go"
+
+Key Rules of Constants
+  1. Value cannot change
+  2. Must be known at compile time
+  3. Can be declared inside or outside functions
+  4. Type is optional
+
+- Multiple Constant Declaration
+  const (
+      a = 1
+      b = 2
+      c = 3
+  )
+
+- Constants with Expressions
+const x = 10
+const y = x + 5
+Allowed because values are known at compile time.
+
+- iota (Simple Explanation)
+  iota is used to create auto-incrementing constants.
+
+const (
+    A = iota // 0
+    B        // 1
+    C        // 2
+)
+
+
+-> What Constants CANNOT Do
+  - Cannot use runtime values
+  const x = time.Now() // ❌ error
+
+  - Cannot be declared using :=
+  const a := 10 // ❌ invalid
+
+=><=  Constants in Go are immutable values declared using const, evaluated at compile time, and can be typed or untyped.
+
 
 
 

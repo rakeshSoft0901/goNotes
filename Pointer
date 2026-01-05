@@ -1,0 +1,143 @@
+What is a Pointer?
+A pointer stores the memory address of a value.
+👉 Instead of copying data, we refer to its memory.
+
+x := 10
+p := &x   // address of x
+
+& → address operator
+* → dereference operator
+
+fmt.Println(*p) // 10
+
+Why Pointers Are Needed?
+  ✔ Modify original value
+  ✔ Avoid copying large data
+  ✔ Improve performance
+  ✔ Required for methods & structs
+
+- Pointer Zero Value
+  var p *int
+  Zero value = nil
+  Dereferencing nil → panic
+
+- Pointers with Functions (VERY IMPORTANT)
+
+  func update(x *int) {
+      *x = 100
+  }
+  
+  a := 10
+  update(&a)
+  fmt.Println(a) // 100
+
+📌 Interview Point:
+Go passes arguments by value, pointers allow mutation.
+
+-*-*-*-* Pointers with Structs (VERY IMPORTANT)
+type User struct {
+    Name string
+}
+
+func update(u User) {
+    u.Name = "Go"
+}
+❌ Original struct NOT changed.
+
+*-*- Struct with pointer
+  func update(u *User) {
+    u.Name = "Go"
+}
+✔ Original struct changed.
+
+-*-*-*- Pointer Receiver in Methods (INTERVIEW FAVORITE)
+func (u *User) updateName(name string) {
+    u.Name = name
+}
+  ✔ Needed when:
+  Modifying struct
+  Struct is large
+
+-*- * Pointers with Arrays
+
+arr := [3]int{1, 2, 3}
+func modify(a *[3]int) {
+    a[0] = 100
+}
+✔ Array updated.
+
+*-*-=  Pointers with Slices (TRICKY)
+func modify(s []int) {
+    s[0] = 99
+}
+✔ Works without pointer
+📌 Slice header copied, array shared.
+
+
+When pointer to slice is needed?
+func appendSlice(s *[]int) {
+    *s = append(*s, 10)
+}
+
+-/*/* Pointers with Maps
+func update(m map[string]int) {
+    m["a"] = 10
+}
+✔ No pointer needed
+📌 Maps are reference types.
+
+
+new vs make (POINTER VIEW)
+p := new(int)
+  Allocates memory
+  Returns pointer
+  Zero value
+
+- make
+s := make([]int, 5)
+Initializes slice/map/channel
+Returns value (not pointer)
+
+- Pointer to Pointer
+  x := 10
+  p := &x
+  pp := &p
+Rarely used, but valid.
+
+*-*-* Pointer Safety Rules
+✔ No pointer arithmetic
+✔ Garbage collected
+✔ Safe memory access
+
+****** A pointer in Go stores the memory address of a value and is used to modify data, reduce copying, and work efficiently with functions and data structures.
+
+- Quick Memory Trick
+  & → get address
+  * → get value
+  Functions get copies
+  Pointer = modify original
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

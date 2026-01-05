@@ -1,0 +1,164 @@
+1️⃣ What is a Channel?
+A channel is a typed conduit used to send and receive data between goroutines.
+
+ch := make(chan int)
+📌 Used for safe communication, not shared memory.
+
+2️⃣ Why Channels?
+✔ Synchronization
+✔ Communication
+✔ Avoid race conditions
+✔ Follow Go proverb
+“Do not communicate by sharing memory; share memory by communicating”
+
+3️⃣ Channel Direction
+ch <- 10      // send
+x := <-ch     // receive
+
+4️⃣ Blocking Behavior (VERY IMPORTANT)
+Send blocks until receive
+Receive blocks until send
+📌 This is synchronization.
+
+5️⃣ Unbuffered Channel
+ch := make(chan int)
+
+✔ Send & receive must meet
+✔ Strong synchronization
+
+6️⃣ Buffered Channel
+
+ch := make(chan int, 3)
+✔ Send blocks only when buffer full
+✔ Receive blocks when empty
+
+7️⃣ Channel Capacity & Length
+cap(ch) // buffer size
+len(ch) // current items
+
+8️⃣ Channel with Goroutines
+
+go func() {
+    ch <- 10
+}()
+
+fmt.Println(<-ch)
+
+9️⃣ Channel Deadlock (INTERVIEW FAVORITE)
+
+ch := make(chan int)
+ch <- 10 // ❌ deadlock
+📌 No receiver → program crashes.
+
+🔟 Closing Channels
+close(ch)
+✔ Sender should close
+❌ Receiver should NOT close
+
+1️⃣1️⃣ Receiving from Closed Channel
+v, ok := <-ch
+ok == false → channel closed
+v → zero value
+
+1️⃣2️⃣ Range Over Channel
+for v := range ch {
+    fmt.Println(v)
+}
+✔ Stops when channel is closed.
+
+1️⃣3️⃣ Sending on Closed Channel (PANIC)
+close(ch)
+ch <- 10 // ❌ panic
+
+1️⃣4️⃣ Nil Channel Behavior (TRICKY)
+
+var ch chan int
+
+Send blocks forever
+Receive blocks forever
+Used in select patterns
+
+1️⃣5️⃣ Directional Channels (INTERVIEW)
+func send(ch chan<- int) {}
+func receive(ch <-chan int) {}
+✔ Improves safety
+✔ Documents intent
+
+1️⃣6️⃣ Select Statement (PREVIEW)
+select {
+case v := <-ch:
+    fmt.Println(v)
+default:
+    fmt.Println("No data")
+}
+
+✔ Non-blocking communication.
+
+1️⃣7️⃣ Channel as Signal
+done := make(chan struct{})
+
+go func() {
+    close(done)
+}()
+<-done
+✔ Zero-memory signal.
+
+1️⃣8️⃣ Fan-out / Fan-in Pattern
+
+One channel → many workers
+Many workers → one channel
+✔ Very common interview topic.
+
+1️⃣9️⃣ Channel vs Mutex (RECAP)
+Channel	                        Mutex
+Communication	                  Shared memory
+Safer logic	                    Faster
+Data flow	                      Critical section
+
+2️⃣0️⃣ Common Interview Traps
+
+❌ Deadlock due to missing receiver
+❌ Closing channel twice
+❌ Sending on closed channel
+❌ Forgetting buffer size
+
+Channel
+A channel is a typed conduit used to safely communicate between goroutines.
+
+Buffered vs Unbuffered
+Unbuffered channels synchronize goroutines, buffered channels decouple them.
+
+🧠 Quick Memory Points
+Send blocks
+Receive blocks
+Close by sender
+Range until closed
+Nil blocks forever
+
+21️⃣ Happens-Before Guarantee (VERY IMPORTANT)
+ch <- x
+y := <-ch
+✔ Write to x happens before receive
+✔ Channels provide memory visibility
+
+👉 Mutex & channels both create happens-before relation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

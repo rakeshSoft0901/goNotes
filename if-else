@@ -1,0 +1,196 @@
+- What is if / else?
+  if / else is used to make decisions based on conditions.
+
+if age >= 18 {
+    fmt.Println("Adult")
+}
+Curly braces {} are mandatory.
+
+-- if / else
+if age >= 18 {
+    fmt.Println("Adult")
+} else {
+    fmt.Println("Minor")
+}
+
+--- else if
+if marks >= 90 {
+    fmt.Println("A")
+} else if marks >= 75 {
+    fmt.Println("B")
+} else {
+    fmt.Println("C")
+}
+
+**** Boolean Condition Rule (VERY IMPORTANT) ****
+Invalid: 
+if 1 { }
+
+Valid:
+if x > 0 { }
+Go does not allow truthy/falsy values.
+
+-- if with Short Statement (INTERVIEW FAVORITE)
+if x := 10; x > 5 {
+    fmt.Println(x)
+}
+x exists only inside if.
+
+- Scope of Variables in if
+if x := 10; x > 5 {
+    fmt.Println(x)
+}
+fmt.Println(x) // ❌ error
+
+- Nested if
+if a > 0 {
+    if a%2 == 0 {
+        fmt.Println("Even positive")
+    }
+}
+
+- Multiple Conditions
+  if a > 0 && b > 0 {
+    fmt.Println("Both positive")
+}
+Operators:
+  && AND
+  || OR
+  ! NOT
+
+-- Early Return Pattern (BEST PRACTICE)
+func check(age int) {
+    if age < 0 {
+        return
+    }
+    fmt.Println("Valid age")
+}
+
+-- if with Function Call
+if err := doWork(); err != nil {
+    fmt.Println(err)
+}
+
+In Go, if / else is used for conditional execution where the condition must be a boolean expression, braces are mandatory, and short variable declarations can be used inside the if statement.
+
+================================================================================ Switch =====================================================================================
+
+- What is switch?
+switch is used to compare one value with multiple cases and execute the matching block.
+✔ Cleaner than multiple if-else
+✔ No break needed (default behavior)
+
+day := 2
+
+switch day {
+case 1:
+    fmt.Println("Monday")
+case 2:
+    fmt.Println("Tuesday")
+default:
+    fmt.Println("Invalid day")
+}
+
+- Important Rules (VERY IMPORTANT)
+    No parentheses ()
+    break is automatic
+    Only one case executes
+    default is optional
+
+- Multiple Values in a Case
+  switch day {
+  case 1, 7:
+      fmt.Println("Weekend")
+  case 2, 3, 4, 5, 6:
+      fmt.Println("Weekday")
+  }
+
+- switch with Expression (Condition Switch)
+  score := 85
+  switch {
+  case score >= 90:
+      fmt.Println("A")
+  case score >= 75:
+      fmt.Println("B")
+  default:
+      fmt.Println("C")
+  }
+
+*-*-*-*- switch with Short Statement (INTERVIEW FAVORITE)
+  switch x := 10; x {
+  case 5:
+      fmt.Println("Five")
+  case 10:
+      fmt.Println("Ten")
+  }
+x scope → only inside switch
+
+*-*-* fallthrough (TRICKY)
+  switch x := 1; x {
+  case 1:
+      fmt.Println("One")
+      fallthrough
+  case 2:
+      fmt.Println("Two")
+  }
+o/p One
+    Two
+
+fallthrough:
+Forces next case to execute
+Does NOT check condition again
+
+*-*-*- Type Switch (VERY IMPORTANT)
+Used with interfaces.
+
+var x interface{} = 10
+switch v := x.(type) {
+case int:
+    fmt.Println("Integer", v)
+case string:
+    fmt.Println("String", v)
+default:
+    fmt.Println("Unknown")
+}
+✔ Used in generic code
+
+-*-*- Switch Without Condition
+switch {
+case true:
+    fmt.Println("Always runs")
+}
+
+-*-*- Nested Switch
+switch a := 1; a {
+case 1:
+    switch b := 2; b {
+    case 2:
+        fmt.Println("Nested")
+    }
+}
+
+-*-*- break in switch
+switch x {
+case 1:
+    fmt.Println("One")
+    break
+}
+Rarely needed (break is default)
+
+- Best Practices
+  ✔ Use switch for multiple values
+  ✔ Avoid fallthrough unless needed
+  ✔ Prefer condition switch over long if-else
+  ✔ Keep cases small
+
+-*-*- In Go, switch provides a clean way to handle multiple conditions, automatically breaks after each case, supports expression-less switches, and includes type switches for interface handling.
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,173 @@
+What is defer?
+defer schedules a function to run after the surrounding function returns.
+
+defer fmt.Println("calling in last")
+fmt.Println("Hello")
+
+Hello
+calling in last
+
+2️⃣ When Deferred Functions Execute?
+✔ Executed after return
+✔ Executed even if panic occurs
+
+3️⃣ LIFO Order (STACK BEHAVIOR)
+defer fmt.Println(1)
+defer fmt.Println(2)
+defer fmt.Println(3)
+3
+2
+1
+📌 Last In First Out
+
+4️⃣ Defer Use Cases (VERY IMPORTANT)
+✔ Closing files
+✔ Unlocking mutex
+✔ Database cleanup
+✔ Logging
+
+file, _ := os.Open("a.txt")
+defer file.Close()
+
+5️⃣ Defer & Return Value (INTERVIEW TRAP)
+func test() int {
+    x := 10
+    defer func() {
+        x = 20
+    }()
+    return x
+}
+o/p 10
+
+Why?
+Return value copied before defer runs.
+
+Named Return with Defer (TRICKY)
+func test() (x int) {
+    defer func() {
+        x = 20
+    }()
+    return 10
+}
+o/p 20
+📌 Defer can modify named return value.
+
+6️⃣ What is panic?
+panic stops normal execution and unwinds the stack.
+panic("Something went wrong")
+
+7️⃣ When to Use Panic?
+✔ Programmer error
+✔ Invalid state
+✔ Unrecoverable situation
+❌ NOT for normal errors.
+
+8️⃣ Panic Flow
+
+Panic occurs
+Deferred functions run
+Program crashes (unless recovered)
+
+9️⃣ What is recover?
+recover catches panic and prevents program crash.
+
+defer func() {
+    if r := recover(); r != nil {
+        fmt.Println("Recovered:", r)
+    }
+}()
+📌 Works only inside deferred function.
+
+🔟 Recover Example
+func safe() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered")
+        }
+    }()
+    panic("Crash")
+}
+✔ Program continues.
+
+1️⃣1️⃣ Panic + Recover Interview Trap
+
+func test() {
+    defer recover()
+    panic("fail")
+}
+❌ DOES NOT recover
+
+✔ Must be inside function:
+defer func() {
+    recover()
+}()
+
+1️⃣2️⃣ Panic in Goroutines (IMPORTANT)
+go func() {
+    panic("boom")
+}()
+❌ Crashes entire program
+✔ Recover must be inside same goroutine
+
+1️⃣3️⃣ Custom Panic Example
+func divide(a, b int) int {
+    if b == 0 {
+        panic("divide by zero")
+    }
+    return a / b
+}
+
+1️⃣4️⃣ Defer with Loop (TRICKY)
+for i := 0; i < 3; i++ {
+    defer fmt.Println(i)
+}
+2
+1
+0
+
+1️⃣5️⃣ Best Practices (INTERVIEW)
+✔ Use defer immediately after resource acquisition
+✔ Prefer error over panic
+✔ Recover only at program boundaries
+✔ Log panic before recover
+
+1️⃣6️⃣ Common Interview Traps
+
+❌ Expecting recover outside defer
+❌ Using panic for validation
+❌ Forgetting LIFO order
+❌ Assuming defer executes immediately
+
+Defer
+Defer schedules a function to run after the surrounding function returns, in LIFO order.
+
+Panic
+Panic stops normal execution and begins stack unwinding.
+
+Recover
+Recover catches a panic and allows the program to continue.
+
+🧠 Quick Memory Points
+Defer = delayed execution
+Panic = crash
+Recover = catch panic
+Defer always runs
+Recover only in defer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

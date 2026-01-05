@@ -1,0 +1,157 @@
+What is a Mutex?
+A mutex (mutual exclusion lock) ensures that only one goroutine can access a shared resource at a time.
+📌 Prevents race conditions.
+
+2️⃣ Why Mutex is Needed?
+count := 0
+
+go func() { count++ }()
+go func() { count++ }()
+
+❌ Race condition
+✔ Mutex ensures safe access.
+
+3️⃣ Import Package
+import "sync"
+
+4️⃣ Basic Mutex Usage
+var mu sync.Mutex
+count := 0
+
+go func() {
+    mu.Lock()
+    count++
+    mu.Unlock()
+}()
+✔ Lock before critical section
+✔ Unlock after
+
+5️⃣ Always Use defer Unlock() (BEST PRACTICE)
+mu.Lock()
+defer mu.Unlock()
+✔ Prevents deadlocks on panic/return.
+
+6️⃣ Mutex with Struct (COMMON)
+type Counter struct {
+    mu    sync.Mutex
+    value int
+}
+
+func (c *Counter) Inc() {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    c.value++
+}
+
+7️⃣ RWMutex (INTERVIEW FAVORITE)
+What is RWMutex?
+Allows:
+  Multiple readers
+  One writer
+
+var mu sync.RWMutex
+
+Read Lock
+mu.RLock()
+defer mu.RUnlock()
+
+Write Lock
+mu.Lock()
+defer mu.Unlock()
+📌 Writers block readers & writers.
+
+8️⃣ When to Use RWMutex?
+
+✔ Many reads
+✔ Few writes
+❌ Heavy writes → slower
+
+9️⃣ Mutex vs Channel (INTERVIEW)
+Mutex	                              Channel
+Shared memory                      	Message passing
+Low overhead                      	More readable
+Critical section                  	Data flow
+📌 Go proverb prefers channels, but mutex is fine.
+
+🔟 Deadlock (VERY IMPORTANT)
+mu.Lock()
+mu.Lock() // ❌ deadlock
+✔ Same goroutine cannot lock twice.
+
+1️⃣1️⃣ Common Deadlock Scenarios
+❌ Forgetting Unlock
+❌ Lock order inversion
+❌ Goroutine waiting forever
+
+1️⃣2️⃣ Mutex is NOT Reentrant (INTERVIEW)
+func f() {
+    mu.Lock()
+    g()
+    mu.Unlock()
+}
+
+func g() {
+    mu.Lock() // ❌ deadlock
+}
+
+1️⃣3️⃣ Mutex Zero Value
+var mu sync.Mutex
+✔ Ready to use
+❌ Do not copy after use.
+
+1️⃣4️⃣ Copying Mutex (INTERVIEW TRAP)
+type Data struct {
+    mu sync.Mutex
+}
+❌ Copying Data after use → undefined behavior.
+
+1️⃣5️⃣ Mutex Performance Notes
+
+✔ Very fast
+✔ Avoid long critical sections
+✔ Lock only what you need
+
+1️⃣6️⃣ Atomic vs Mutex (INTERVIEW)
+atomic.AddInt64(&x, 1)
+
+Atomic	                        Mutex
+Single variable	                Multiple variables
+Faster	                        Flexible
+Limited operations	            Complex logic
+
+1️⃣7️⃣ Common Interview Traps
+
+❌ Forgetting defer unlock
+❌ Copying mutex
+❌ Overusing mutex
+❌ Using mutex inside goroutine without exit
+
+Mutex
+A mutex ensures mutual exclusion so only one goroutine accesses shared data at a time.
+
+RWMutex
+RWMutex allows multiple readers but only one writer.
+
+🧠 Quick Memory Points
+
+Mutex = lock
+Use defer unlock
+Zero value usable
+Not reentrant
+Avoid copying
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

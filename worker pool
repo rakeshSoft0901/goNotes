@@ -1,0 +1,194 @@
+1️⃣ What is a Worker Pool?
+A worker pool is a pattern where:
+A fixed number of worker goroutines
+Pull jobs from a job queue (channel)
+Process them concurrently
+Send results to a result channel
+
+✔ Controls concurrency
+✔ Improves throughput
+✔ Prevents resource exhaustion
+
+2️⃣ When to Use Worker Pool?
+
+✔ CPU-bound tasks
+✔ I/O-bound tasks
+✔ Rate limiting
+✔ Background processing
+✔ API calls, DB ops
+
+3️⃣ Core Components (ARCHITECTURE)
+Producer → Jobs Channel → Workers → Results Channel → Consumer
+
+Components:
+1. Job struct
+2. Jobs channel
+3. Workers
+4. Result channel
+5. WaitGroup
+6. Context (shutdown)
+
+4️⃣ Basic Worker Pool (FOUNDATION)
+type Job struct {
+    ID int
+    Data int
+}
+
+type Result struct {
+    JobID int
+    Value int
+}
+
+Worker Function
+func worker(
+    ctx context.Context,
+    id int,
+    jobs <-chan Job,
+    results chan<- Result,
+    wg *sync.WaitGroup,
+) {
+    defer wg.Done()
+
+    for {
+        select {
+        case <-ctx.Done():
+            return
+        case job, ok := <-jobs:
+            if !ok {
+                return
+            }
+            result := Result{
+                JobID: job.ID,
+                Value: job.Data * 2,
+            }
+            results <- result
+        }
+    }
+}
+
+5️⃣ Creating the Pool
+
+numWorkers := 4
+jobs := make(chan Job, 10)
+results := make(chan Result, 10)
+
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+
+var wg sync.WaitGroup
+
+for i := 1; i <= numWorkers; i++ {
+    wg.Add(1)
+    go worker(ctx, i, jobs, results, &wg)
+}
+
+6️⃣ Producing Jobs
+go func() {
+    for i := 1; i <= 20; i++ {
+        jobs <- Job{ID: i, Data: i}
+    }
+    close(jobs)
+}()
+✔ Producer closes jobs channel.
+
+7️⃣ Collecting Results
+go func() {
+    wg.Wait()
+    close(results)
+}()
+
+for res := range results {
+    fmt.Println(res)
+}
+✔ Clean shutdown
+✔ No goroutine leak
+
+8️⃣ Graceful Shutdown (INTERVIEW CRITICAL)
+signal.Notify(sig, os.Interrupt)
+<-sig
+cancel()
+✔ Stops workers via context
+✔ Prevents leaks
+
+9️⃣ Backpressure Control
+jobs := make(chan Job, 100)
+✔ Buffer size limits producer speed
+✔ Prevents memory explosion
+
+🔟 Dynamic Worker Scaling (ADVANCED)
+numWorkers := runtime.NumCPU()
+✔ CPU-bound tasks
+✔ Scale with hardware
+
+1️⃣1️⃣ Error Handling in Worker Pool
+type Result struct {
+    JobID int
+    Err   error
+}
+✔ Workers never panic
+✔ Errors sent to result channel
+
+1️⃣2️⃣ Worker Pool with Rate Limiting
+ticker := time.NewTicker(100 * time.Millisecond)
+defer ticker.Stop()
+
+<-ticker.C
+✔ Controls throughput
+
+1️⃣3️⃣ Fan-Out / Fan-In Pattern
+Fan-out → distribute jobs
+Fan-in → collect results
+✔ Worker pool is classic fan-out/fan-in
+
+1️⃣4️⃣ Worker Pool vs Goroutines (INTERVIEW)
+Goroutines	                  Worker Pool
+Unbounded	                    Bounded
+Easy	                        Controlled
+Risky	                        Safe
+
+1️⃣5️⃣ Common Worker Pool Traps
+
+❌ Not closing jobs channel
+❌ Not closing results channel
+❌ Missing WaitGroup
+❌ No cancellation path
+❌ Panic inside worker
+
+1️⃣6️⃣ Worker Pool Best Practices
+
+✔ Always use context
+✔ Limit worker count
+✔ Buffer channels carefully
+✔ Handle panic safely
+✔ Avoid blocking results
+
+Worker Pool
+A worker pool limits concurrency by using a fixed number of worker goroutines to process jobs from a queue.
+
+Why Worker Pool?
+To control resource usage and improve throughput.
+
+🧠 Quick Memory Points
+
+Fixed workers
+Jobs channel
+Results channel
+Context for cancel
+WaitGroup for sync
+
+🧪Real Interview Question
+Q: How do you stop a worker pool gracefully?
+A: Use context cancellation, close the job channel, wait for workers using WaitGroup, then close results.
+
+
+
+
+
+
+
+
+
+
+
+
+

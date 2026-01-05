@@ -1,0 +1,185 @@
+1️⃣ What is select?
+select lets a goroutine wait on multiple channel operations (send/receive).
+
+select {
+case v := <-ch1:
+    fmt.Println(v)
+case ch2 <- 10:
+}
+
+📌 Like switch, but for channels.
+
+2️⃣ Why select?
+
+✔ Handle multiple channels
+✔ Avoid blocking forever
+✔ Implement timeouts
+✔ Cancellation
+✔ Concurrency patterns
+
+3️⃣ Blocking Rules (VERY IMPORTANT)
+✔ select blocks until one case is ready
+✔ If multiple cases ready, one is chosen randomly
+✔ If no case ready and no default → block
+
+4️⃣ default Case (NON-BLOCKING)
+
+select {
+case v := <-ch:
+    fmt.Println(v)
+default:
+    fmt.Println("No data")
+}
+✔ Makes select non-blocking
+❌ Can cause busy looping if misused
+
+5️⃣ Random Selection (INTERVIEW FAVORITE)
+
+select {
+case <-ch1:
+case <-ch2:
+}
+✔ If both ready → random choice
+📌 Prevents starvation
+
+6️⃣ Select with Nil Channels (TRICKY)
+var ch chan int
+
+select {
+case <-ch:
+    fmt.Println("never runs")
+default:
+    fmt.Println("runs")
+}
+📌 Nil channel case is disabled
+
+7️⃣ Disable Case Dynamically (ADVANCED)
+if done {
+    ch = nil
+}
+✔ Removing case from select
+
+8️⃣ Timeout Pattern (VERY IMPORTANT)
+
+select {
+case v := <-ch:
+    fmt.Println(v)
+case <-time.After(2 * time.Second):
+    fmt.Println("timeout")
+}
+✔ Prevents blocking forever
+
+9️⃣ Ticker Pattern
+ticker := time.NewTicker(time.Second)
+defer ticker.Stop()
+
+select {
+case <-ticker.C:
+    fmt.Println("tick")
+}
+
+🔟 Cancel with done Channel
+select {
+case <-done:
+    return
+case v := <-ch:
+    process(v)
+}
+✔ Graceful shutdown
+
+1️⃣1️⃣ Select in Loop (COMMON)
+for {
+    select {
+    case v := <-ch:
+        fmt.Println(v)
+    case <-done:
+        return
+    }
+}
+
+1️⃣2️⃣ Starvation Avoidance
+
+Random case selection ensures:
+✔ Fairness
+✔ No priority bias
+
+1️⃣3️⃣ Send in Select (TRICKY)
+select {
+case ch <- v:
+    fmt.Println("sent")
+default:
+    fmt.Println("not ready")
+}
+✔ Non-blocking send
+
+1️⃣4️⃣ Closed Channel in Select
+select {
+case v, ok := <-ch:
+    if !ok {
+        fmt.Println("closed")
+    }
+}
+✔ Immediately selected
+
+1️⃣5️⃣ Select vs Switch (INTERVIEW)
+select	            switch
+Channels	          Values
+Blocking	          Non-blocking
+Concurrency        	Control flow
+
+1️⃣6️⃣ Common Select Patterns
+
+✔ Fan-in
+✔ Worker pool
+✔ Rate limiting
+✔ Heartbeat
+✔ Timeout & retry
+
+1️⃣7️⃣ Common Interview Traps
+
+❌ Forgetting default causes block
+❌ Busy loop with default
+❌ Nil channel confusion
+❌ Assuming order
+
+Select
+Select waits on multiple channel operations and executes one that is ready.
+
+Default Case
+Default makes select non-blocking.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

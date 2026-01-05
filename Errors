@@ -1,0 +1,271 @@
+1️⃣ What is an Error in Go?
+In Go, errors are values, not exceptions.
+
+type error interface {
+    Error() string
+}
+📌 Returned as the last return value.
+
+2️⃣ Creating Errors
+Using errors.New
+err := errors.New("something went wrong")
+
+Using fmt.Errorf
+err := fmt.Errorf("failed to load")
+
+3️⃣ Returning Errors (STANDARD PATTERN)
+func divide(a, b int) (int, error) {
+    if b == 0 {
+        return 0, errors.New("divide by zero")
+    }
+    return a / b, nil
+}
+✔ nil means no error.
+
+4️⃣ Handling Errors
+result, err := divide(10, 0)
+if err != nil {
+    return err
+}
+✔ Always check error immediately.
+
+5️⃣ Custom Error Types (INTERVIEW FAVORITE)
+type NotFoundError struct {
+    ID int
+}
+
+func (e NotFoundError) Error() string {
+    return fmt.Sprintf("id %d not found", e.ID)
+}
+
+6️⃣ Error Wrapping (VERY IMPORTANT)
+return fmt.Errorf("fetch user: %w", err)
+✔ %w wraps error
+✔ Enables error chains
+
+7️⃣ Unwrapping Errors
+errors.Unwrap(err)
+
+8️⃣ errors.Is (INTERVIEW CRITICAL)
+if errors.Is(err, ErrNotFound) {}
+✔ Works with wrapped errors.
+
+9️⃣ errors.As (TYPE CHECK)
+var nfErr *NotFoundError
+if errors.As(err, &nfErr) {}
+
+✔ Extracts custom error.
+
+🔟 Sentinel Errors (COMMON)
+var ErrNotFound = errors.New("not found")
+✔ Compare with errors.Is
+
+1️⃣1️⃣ Panic vs Error (INTERVIEW)
+| Error       | Panic      |
+| ----------- | ---------- |
+| Expected    | Unexpected |
+| Recoverable | Crash      |
+| Returned    | Thrown     |
+
+📌 Prefer errors.
+
+1️⃣2️⃣ Multiple Errors (Go 1.20+)
+return errors.Join(err1, err2)
+✔ Combines multiple errors.
+
+1️⃣3️⃣ Error Handling in Loops (TRICKY)
+for _, v := range list {
+    if err := process(v); err != nil {
+        return err
+    }
+}
+✔ Use short scope.
+
+1️⃣4️⃣ Wrapping vs Logging (INTERVIEW)
+
+❌ Logging everywhere
+✔ Wrap and return
+✔ Log at top level
+
+1️⃣5️⃣ Error with Context
+return fmt.Errorf("user %d: %w", id, err)
+✔ Add meaningful info.
+
+1️⃣6️⃣ Common Error Anti-Patterns
+
+❌ Ignoring errors
+❌ Returning generic messages
+❌ Panic for validation
+❌ String comparison
+
+1️⃣7️⃣ Best Practices Summary
+
+✔ Errors as values
+✔ Wrap with context
+✔ Use errors.Is/As
+✔ Create typed errors
+✔ Log once
+
+Error Handling
+Go handles errors by returning them as values and checking explicitly.
+
+Error Wrapping
+Error wrapping preserves the original error while adding context.
+
+🧠 Quick Memory Points
+error is interface
+nil = no error
+%w wraps
+Is = compare
+As = type assert
+
+************************************************************************************
+
+1️⃣ What is a Custom Error?
+A custom error is a user-defined type that implements the error interface.
+
+type error interface {
+    Error() string
+}
+✔ Any type with Error() string is an error.
+
+2️⃣ Why Custom Errors?
+Use custom errors when you need:
+More information than a string
+Error categorization
+Programmatic handling
+Clean API contracts
+
+3️⃣ Basic Custom Error (STRUCT)
+
+type InvalidAgeError struct {
+    Age int
+}
+
+func (e InvalidAgeError) Error() string {
+    return fmt.Sprintf("invalid age: %d", e.Age)
+}
+
+Usage:
+return InvalidAgeError{Age: -5}
+
+4️⃣ Pointer vs Value Receiver (INTERVIEW)
+func (e *InvalidAgeError) Error() string {}
+
+✔ Use pointer receiver if:
+Error has large fields
+Error may be modified
+Want identity consistency
+
+5️⃣ Sentinel Errors vs Custom Errors
+Sentinel:
+var ErrNotFound = errors.New("not found")
+
+Custom:
+type NotFoundError struct {
+    ID int
+}
+✔ Sentinel → simple
+✔ Custom → rich context
+
+6️⃣ Wrapping Custom Errors (CRITICAL)
+return fmt.Errorf("fetch user: %w", NotFoundError{ID: 10})
+✔ Preserves original error.
+
+7️⃣ Checking Custom Errors (errors.As)
+var nfErr *NotFoundError
+if errors.As(err, &nfErr) {
+    fmt.Println(nfErr.ID)
+}
+✔ Safest way
+✔ Works with wrapping
+
+8️⃣ Using errors.Is with Custom Errors
+Implement Is
+func (e NotFoundError) Is(target error) bool {
+    _, ok := target.(NotFoundError)
+    return ok
+}
+✔ Enables category matching.
+
+9️⃣ Typed Error with Code (PRODUCTION)
+type AppError struct {
+    Code    string
+    Message string
+}
+
+func (e AppError) Error() string {
+    return e.Message
+}
+
+return AppError{
+    Code: "USER_NOT_FOUND",
+    Message: "user does not exist",
+}
+
+🔟 Custom Error + HTTP Status (VERY COMMON)
+
+type HTTPError struct {
+    Status int
+    Err    error
+}
+
+func (e HTTPError) Error() string {
+    return e.Err.Error()
+}
+Usage:
+return HTTPError{
+    Status: 404,
+    Err: ErrNotFound,
+}
+
+
+1️⃣1️⃣ Validation Errors (FIELD LEVEL)
+type ValidationError struct {
+    Field string
+    Msg   string
+}
+
+func (e ValidationError) Error() string {
+    return fmt.Sprintf("%s: %s", e.Field, e.Msg)
+}
+✔ Used in APIs.
+
+1️⃣2️⃣ Multiple Custom Errors (Go 1.20+)
+return errors.Join(
+    ValidationError{"email", "invalid"},
+    ValidationError{"age", "too low"},
+)
+
+1️⃣3️⃣ Error Wrapping Best Practice
+❌ return errors.New("failed")
+✅ return fmt.Errorf("save user %d: %w", id, err)
+
+1️⃣4️⃣ Custom Errors + Context
+return fmt.Errorf("request %s: %w", reqID, err)
+✔ Adds traceability.
+
+1️⃣5️⃣ Common Traps (INTERVIEW)
+
+❌ Comparing errors with ==
+❌ String matching
+❌ Overusing panic
+❌ Returning internal errors to clients
+
+1️⃣6️⃣ Clean Error Design (ARCHITECTURE)
+Layered approach:
+Domain errors
+Service errors
+Transport errors
+✔ Each layer wraps errors.
+
+Custom Error
+A custom error is a user-defined type implementing the error interface to provide richer context.
+
+errors.As
+errors.As extracts a specific error type from a wrapped error chain.
+
+
+
+
+

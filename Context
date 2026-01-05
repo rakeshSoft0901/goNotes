@@ -1,0 +1,161 @@
+What is context?
+context is used to carry deadlines, cancellation signals, and request-scoped values across API boundaries and goroutines.
+
+import "context"
+
+2️⃣ Why Context is Needed?
+
+✔ Cancel goroutines
+✔ Handle timeouts
+✔ Prevent goroutine leaks
+✔ Propagate request lifecycle
+
+📌 Widely used in:
+HTTP servers
+Microservices
+Database calls
+
+3️⃣ Root Contexts
+context.Background()
+context.TODO()
+Context	                  Use
+Background	Main,         long-lived
+TODO	                    Placeholder
+
+4️⃣ Creating Cancellable Context
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+✔ Call cancel() to stop work.
+
+5️⃣ Context with Timeout
+ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+defer cancel()
+✔ Auto-cancel after timeout.
+
+6️⃣ Context with Deadline
+ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second))
+defer cancel()
+
+7️⃣ How Cancellation Works
+select {
+case <-ctx.Done():
+    fmt.Println(ctx.Err())
+    return
+}
+📌 Done() returns a channel.
+
+8️⃣ Context Error Values
+Error                      	          Meaning
+context.Canceled	                    Manual cancel
+context.DeadlineExceeded	            Timeout
+
+9️⃣ Passing Context (INTERVIEW RULE)
+func process(ctx context.Context) {}
+✔ Always first parameter
+✔ Never store inside struct
+
+🔟 Context with Goroutines (VERY IMPORTANT)
+go func(ctx context.Context) {
+    for {
+        select {
+        case <-ctx.Done():
+            return
+        default:
+            work()
+        }
+    }
+}(ctx)
+✔ Prevents leaks.
+
+1️⃣1️⃣ Context Value (USE CAREFULLY)
+ctx = context.WithValue(ctx, "userID", 123)
+
+✔ Request-scoped data
+❌ Not for optional params
+
+Best Practice Key Type
+type userKeyType string
+const userKey userKeyType = "user"
+
+1️⃣2️⃣ Context Tree (IMPORTANT)
+parent → child → child
+✔ Cancel parent → all children cancel
+❌ Cancel child → parent unaffected
+
+1️⃣3️⃣ HTTP Server Example (INTERVIEW)
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    ctx := r.Context()
+    select {
+    case <-ctx.Done():
+        return
+    }
+}
+✔ Automatically canceled when client disconnects.
+
+1️⃣4️⃣ Database / API Calls
+db.QueryContext(ctx, query)
+✔ Respects cancellation.
+
+1️⃣5️⃣ Context Anti-Patterns (INTERVIEW TRAPS)
+❌ Storing context in struct
+❌ Passing nil context
+❌ Using context for config
+❌ Forgetting to call cancel
+
+1️⃣6️⃣ Context vs Channel
+Context              	Channel
+Cancellation	        Data
+Hierarchical	        Flat
+Standard	            Custom
+✔ Often used together.
+
+1️⃣7️⃣ Context & Select (COMMON)
+select {
+case <-ctx.Done():
+    return
+case v := <-ch:
+    process(v)
+}
+
+
+1️⃣8️⃣ Best Practices Summary
+✔ Always call cancel
+✔ Pass context explicitly
+✔ Keep values small
+✔ Respect cancellation
+
+Context
+Context carries deadlines, cancellation signals, and request-scoped values across goroutines.
+
+Why First Parameter?
+To make cancellation propagation explicit and consistent.
+
+🧠 Quick Memory Points
+
+Context controls lifecycle
+Done() = cancellation signal
+Parent cancels children
+First parameter
+Never store context
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

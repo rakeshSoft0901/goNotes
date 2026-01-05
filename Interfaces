@@ -1,0 +1,157 @@
+What is an Interface?
+An interface defines behavior, not data.
+
+type Speaker interface {
+    Speak() string
+}
+📌 It only contains method signatures.
+
+---- Implicit Implementation (VERY IMPORTANT)
+
+type Person struct{}
+func (p Person) Speak() string {
+    return "Hello"
+}
+
+✔ Person implements Speaker
+✔ No implements keyword
+✔ Automatically done
+
+---- Using Interface
+func saySomething(s Speaker) {
+    fmt.Println(s.Speak())
+}
+
+4️⃣ Interface as Function Parameter (COMMON)
+func print(s fmt.Stringer) {
+    fmt.Println(s.String())
+}
+📌 Enables loose coupling.
+
+5️⃣ Interface as Return Type
+func getSpeaker() Speaker {
+    return Person{}
+}
+✔ Return behavior, not concrete type.
+
+6️⃣ Empty Interface (interface{}) (IMPORTANT)
+var x interface{}
+x = 10
+x = "Go"
+
+✔ Can hold any type
+📌 Used before Go 1.18 (generics)
+
+7️⃣ Type Assertion
+v := x.(int)
+❌ Panic if wrong type.
+
+✔ Safe version:
+v, ok := x.(int)
+
+8️⃣ Type Switch (INTERVIEW FAVORITE)
+switch v := x.(type) {
+case int:
+    fmt.Println("int", v)
+case string:
+    fmt.Println("string", v)
+default:
+    fmt.Println("unknown")
+}
+
+
+9️⃣ Interface with Pointer Receiver (TRICKY)
+  type Writer interface {
+      Write()
+  }
+  
+  type File struct{}
+  func (f *File) Write() {}
+
+✔ Only *File implements Writer
+❌ File does NOT
+📌 Interview trap
+
+🔟 Interface Zero Value
+var s Speaker
+
+Zero value = nil
+Calling method → panic
+
+1️⃣1️⃣ Nil Interface vs Nil Concrete Value (VERY IMPORTANT)
+var p *Person = nil
+var s Speaker = p
+
+❌ s != nil
+📌 Interface = (type, value)
+Type exists → interface not nil.
+
+1️⃣2️⃣ Interface Embedding
+
+type Reader interface {
+    Read()
+}
+
+type Writer interface {
+    Write()
+}
+
+type ReadWriter interface {
+    Reader
+    Writer
+}
+✔ Composition of behaviors.
+
+
+1️⃣3️⃣ Common Standard Interfaces
+Interface                	Purpose
+error                    	error handling
+fmt.Stringer	            string formatting
+io.Reader	                read data
+io.Writer                	write data
+
+1️⃣4️⃣ Custom Error Interface Example
+type MyError struct {
+    Msg string
+}
+
+func (e MyError) Error() string {
+    return e.Msg
+}
+
+1️⃣5️⃣ Interface Performance (INTERVIEW)
+Interface call = slight overhead
+Use interfaces at boundaries
+Accept interfaces, return structs
+📌 Go proverb
+
+1️⃣6️⃣ When to Use Interface?
+✔ Multiple implementations
+✔ Dependency injection
+✔ Testing (mocking)
+✔ Decoupling
+
+1️⃣7️⃣ When NOT to Use Interface?
+❌ Only one implementation
+❌ Premature abstraction
+
+1️⃣8️⃣ Common Interview Traps
+❌ Expecting explicit implementation
+❌ Pointer vs value receiver confusion
+❌ Nil interface confusion
+❌ Overusing empty interface
+
+Interface
+An interface defines a set of method signatures that a type must implement.
+
+Implicit Implementation
+Go uses implicit interface implementation without an implements keyword.
+
+Empty Interface
+An empty interface can hold values of any type.
+
+
+
+
+
+

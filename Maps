@@ -1,0 +1,130 @@
+What is a Map?
+A map is a collection of key–value pairs.
+👉 Similar to dictionary / hash map.
+
+m := make(map[string]int)
+
+m := map[string]int{
+    "a": 1,
+    "b": 2,
+}
+
+- Nil map
+var m map[string]int
+
+- Zero Value of Map (INTERVIEW)
+    Zero value = nil
+    Reading is allowed
+    Writing causes panic
+
+var m map[string]int
+fmt.Println(m["a"]) // 0
+m["a"] = 1          // ❌ panic
+
+- Accessing Values
+  v := m["a"]
+
+- Comma OK Idiom (VERY IMPORTANT)
+  v, ok := m["a"]
+  ok == true → key exists
+  ok == false → key does not exist
+
+- Updating & Adding
+  m["a"] = 10
+  ✔ Same syntax for add & update.
+
+- Deleting Key
+  delete(m, "a")
+  ✔ Safe even if key doesn’t exist.
+
+- Looping Over Map
+  for k, v := range m {
+    fmt.Println(k, v)
+  }
+Order is NOT guaranteed.
+
+- Map is Reference Type (VERY IMPORTANT)
+  m1 := map[string]int{"a": 1}
+  m2 := m1
+  m2["a"] = 100
+  
+  fmt.Println(m1["a"]) // 100
+✔ No copy on assignment.
+
+- Passing Map to Function
+  func update(m map[string]int) {
+      m["a"] = 50
+  }
+✔ Original map modified.
+
+- Map with Struct Values
+  type User struct {
+      Name string
+  }
+  
+  users := map[int]User{
+      1: {Name: "Go"},
+  }
+Cannot modify struct field directly:
+users[1].Name = "Lang" // ❌
+
+✔ Fix:
+  u := users[1]
+  u.Name = "Lang"
+  users[1] = u
+
+- Map with Slice Values
+  m := map[string][]int{}
+  m["a"] = append(m["a"], 1)
+  ✔ Works even if key doesn’t exist.
+  
+
+- Map Keys Rules (INTERVIEW)
+  ✔ Keys must be comparable:
+  int
+  string
+  bool
+  structs (with comparable fields)
+  
+❌ Invalid keys:
+  slice
+  map
+  function
+
+- Map Comparison
+Cannot compare maps directly:
+m1 == m2 // ❌
+✔ Only compare with nil.
+
+- Concurrency (VERY IMPORTANT)
+  ❌ Map is NOT thread-safe
+fatal error: concurrent map writes
+
+✔ Solutions:
+sync.Mutex
+sync.Map
+
+Map Capacity (Performance Tip)
+m := make(map[string]int, 1000)
+✔ Reduces rehashing.
+
+A map in Go is a reference-type data structure that stores unordered key–value pairs, where keys must be comparable and the zero value is nil.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

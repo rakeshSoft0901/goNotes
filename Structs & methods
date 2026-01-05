@@ -1,0 +1,182 @@
+ What is a Struct?
+A struct is a collection of related fields (like a class data holder).
+
+type User struct {
+    id    int
+    Name  string
+    email string
+}
+
+
+- Creating Structs
+Using field names (recommended)
+u := User{
+    id:   1,
+    name: "Go",
+}
+
+Without field names (order matters ❌)
+u := User{1, "Go", "go@mail.com"}
+
+-**- Zero Value of Struct
+var u User
+All fields get zero values
+Struct itself is NOT nil
+
+-- Accessing Fields
+fmt.Println(u.Name)
+u.Name = "Golang"
+
+u := &User{
+    id: 1,
+}
+✔ Recommended for performance.
+
+-- Passing Struct to Function
+❌ Value copy
+func update(u User) {
+    u.Name = "Go"
+}
+✅ Pointer (original updated)
+func update(u *User) {
+    u.Name = "Go"
+}
+
+- Methods in Go
+A method is a function attached to a type.
+func (u User) greet() {
+    fmt.Println("Hello", u.Name)
+}
+
+--- Value Receiver vs Pointer Receiver (VERY IMPORTANT)
+Value Receiver
+func (u User) updateName(name string) {
+    u.Name = name
+}
+❌ Does NOT update original.
+
+Pointer Receiver
+func (u *User) updateName(name string) {
+    u.Name = name
+}
+✔ Updates original.
+
+- Use pointer receiver when:
+    Modifying struct
+    Struct is large
+    Consistency
+
+Method Call Shortcut (INTERVIEW TRAP)
+u := User{Name: "Go"}
+u.updateName("Lang")
+✔ Go automatically takes address.
+
+***** Embedded Structs (Composition)
+type Address struct {
+    City string
+}
+
+type User struct {
+    Name string
+    Address
+}
+
+u.City = "Delhi"
+✔ No inheritance, composition over inheritance.
+
+**** Struct Tags (VERY IMPORTANT)
+type User struct {
+    Name string `json:"name"`
+    Age  int    `json:"age,omitempty"`
+}
+
+Used in:
+  JSON
+  DB
+  Validation
+
+*** Anonymous Struct
+user := struct {
+    Name string
+    Age  int
+}{
+    "Go",
+    10,
+}
+✔ Useful for short-lived data.
+
+---- Struct Comparison
+u1 == u2 // valid if all fields are comparable
+❌ Not allowed if struct contains:
+  map
+  slice
+  func
+
+**** Struct with Slices & Maps
+type User struct {
+    Skills []string
+    Meta   map[string]string
+}
+⚠️ Maps must be initialized.
+
+Constructor Pattern (COMMON) *****
+
+func NewUser(name string) *User {
+    return &User{Name: name}
+}
+✔ Idiomatic Go.
+
+-*---- Methods on Non-Struct Types
+type MyInt int
+
+func (m MyInt) double() int {
+    return int(m * 2)
+}
+✔ Methods can be on any type (except built-in).
+
+/*/*/*/*/*/*/   Exported vs Unexported Fields
+type User struct {
+    Name string // exported
+    age  int    // private
+}
+✔ Capital letter → exported.
+
+- Struct
+A struct is a composite data type that groups related fields together.
+
+- Method
+A method is a function associated with a receiver type.
+
+- Pointer Receiver
+Pointer receivers allow methods to modify the original struct and avoid copying.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

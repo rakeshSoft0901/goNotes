@@ -1,0 +1,223 @@
+What is an Array?
+An array is a collection of fixed-size elements of the same type.
+
+var arr [5]int  // All elements get zero value (0).
+
+With values:
+  arr := [3]int{1, 2, 3}
+
+Size inferred:
+  arr := [...]int{10, 20, 30}
+Compiler calculates size.
+
+Accessing Elements
+  fmt.Println(arr[0]) // first element
+Index starts from 0.
+
+Modifying Elements:
+  arr[1] = 50
+
+Length of Array:
+  len(arr) // Fixed, cannot change.
+
+*-*-*-Array is Value Type (VERY IMPORTANT)
+a := [3]int{1, 2, 3}
+b := a
+b[0] = 100
+
+fmt.Println(a) // [1 2 3]
+fmt.Println(b) // [100 2 3]
+Copy happens on assignment.
+
+- Passing Array to Function
+func update(arr [3]int) {
+    arr[0] = 99
+}
+Original array NOT changed.
+✔ For change Use pointer or slice.
+
+- Array Pointer
+  func update(arr *[3]int) {
+      arr[0] = 99
+  }
+  ✔ Original array updated.
+
+- Looping Over Array
+Using for
+
+for i := 0; i < len(arr); i++ {
+    fmt.Println(arr[i])
+}
+
+- Using range
+  for i, v := range arr {
+      fmt.Println(i, v)
+  } // v is a copy.
+
+-*-*-*- Multidimensional Array
+var matrix [2][3]int
+matrix := [2][2]int{
+    {1, 2},
+    {3, 4},
+}
+
+*-*-* Comparing Arrays
+  a := [2]int{1, 2}
+  b := [2]int{1, 2}
+  fmt.Println(a == b) // true
+
+// ✔ Arrays are comparable.
+// ❌ Slices are NOT comparable.
+
+- Zero Value of Array
+var a [3]int
+fmt.Println(a) // [0 0 0]
+
+-*-*-* When to Use Arrays?
+
+✔ Fixed-size data
+✔ Performance-critical low-level code
+✔ When immutability is desired
+
+❌ Not for dynamic data
+
+*/*/*/*/* An array in Go is a fixed-size, value-type data structure where the size is part of the type and assignment or function calls create copies.
+
+********************************************************************************** Slices ************************************************************
+
+What is a Slice?
+A slice is a dynamic, flexible view over an array.
+
+nums := []int{1, 2, 3}
+
+- Using make
+nums := make([]int, 3)
+length = 3, capacity = 3
+
+- With length & capacity
+nums := make([]int, 2, 5)
+
+- From array
+arr := [5]int{1, 2, 3, 4, 5}
+s := arr[1:4] 
+
+- Length & Capacity (VERY IMPORTANT)
+len(nums) // number of elements
+cap(nums) // total space
+📌 Capacity grows automatically.
+
+- Slice Internals (INTERVIEW FAVORITE)
+A slice has 3 things:
+  Pointer to array
+  Length
+  Capacity
+
+- Zero Value of Slice
+  var s []int
+  s == nil → true
+  len(s) → 0
+  cap(s) → 0
+
+- Nil Slice vs Empty Slice (TRICKY)
+  var a []int       // nil slice
+  b := []int{}      // empty slice
+
+JSON difference:
+  nil → null
+  empty → []
+
+- Appending to Slice
+nums := []int{1, 2}
+nums = append(nums, 3)
+Automatically grows capacity.
+✔ Automatically grows capacity.
+
+- Capacity Growth Rule (INTERVIEW)
+Small slices → double capacity
+Large slices → grow ~25%
+📌 Reallocation happens → new array created.
+
+-*-*-Append Gotcha (VERY IMPORTANT)
+a := []int{1, 2, 3}
+b := append(a, 4)
+
+b[0] = 100
+fmt.Println(a) // may change!
+📌 Because both may share same array.
+
+✔ Safe way:
+b := append([]int{}, a...)
+
+- Slice Copy
+dst := make([]int, len(src))
+copy(dst, src)
+
+- Slicing a Slice
+s := []int{1, 2, 3, 4}
+sub := s[1:3]
+📌 Shares same backing array.
+
+- Full Slice Expression (ADVANCED)
+sub := s[1:3:3]
+✔ Controls capacity
+✔ Prevents accidental overwrite
+
+- Passing Slice to Function
+func update(s []int) {
+    s[0] = 99
+}
+✔ Modifies original data.
+📌 Slice header is copied, backing array is shared.
+
+*-*- Looping Over Slice
+for i, v := range s {
+    fmt.Println(i, v)
+}
+
+- Deleting Element from Slice
+i := 2
+s = append(s[:i], s[i+1:]...)
+
+- Slice vs Array (Quick)
+
+- When to Use Slices?
+  ✔ Almost everywhere
+  ✔ Dynamic data
+  ✔ Function parameters
+
+- A slice in Go is a dynamic, reference-type data structure that provides a flexible view over an array, containing a pointer, length, and capacity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,157 @@
+What is a for Loop?
+A for loop is used to repeat a block of code multiple times.
+
+Go has ONLY ONE loop: for
+(No while, no do-while)
+
+- Basic for Loop
+  for i := 0; i < 5; i++ {
+    fmt.Println(i)
+  }
+
+Parts:
+  Initialization → i := 0
+  Condition → i < 5
+  Post statement → i++
+
+- for as while Loop:
+  Go replaces while using for.
+  i := 0
+  for i < 5 {
+      fmt.Println(i)
+      i++
+  }
+
+- Infinite Loop
+  for {
+      fmt.Println("Running...")
+  }
+
+- for with break: Stops loop completely.
+  for i := 1; i <= 5; i++ {
+      if i == 3 {
+          break
+      }
+      fmt.Println(i)
+  }
+
+- for with continue: Skips current iteration.
+  for i := 1; i <= 5; i++ {
+      if i == 3 {
+          continue
+      }
+      fmt.Println(i)
+  }
+
+- for with range (VERY IMPORTANT)
+  nums := []int{10, 20, 30}
+  for index, value := range nums {
+      fmt.Println(index, value)
+  }
+
+- Ignore index or value
+for _, value := range nums {
+    fmt.Println(value)
+}
+
+-Loop over map
+  m := map[string]int{"a": 1, "b": 2}
+  
+  for key, value := range m {
+      fmt.Println(key, value)
+  }
+Map iteration order is NOT guaranteed.
+
+- Loop over string
+for i, ch := range "Go" {
+    fmt.Println(i, ch)
+}
+Iterates over runes (Unicode), not bytes.
+
+-# Common range Mistake (INTERVIEW TRAP)
+for _, v := range nums {
+    go func() {
+        fmt.Println(v)
+    }()
+}
+❌ Wrong output (race condition)
+
+------ Fix
+for _, v := range nums {
+    v := v
+    go func() {
+        fmt.Println(v)
+    }()
+}
+
+- Labeled for Loop
+  outer:
+  for i := 1; i <= 3; i++ {
+      for j := 1; j <= 3; j++ {
+          if j == 2 {
+              break outer
+          }
+      }
+  }
+Breaks outer loop directly.
+
+- for with select (Concurrency)
+  for {
+      select {
+      case msg := <-ch:
+          fmt.Println(msg)
+      default:
+          fmt.Println("waiting")
+      }
+  }
+
+- Variable Scope in for
+  for i := 0; i < 3; i++ {
+      fmt.Println(i)
+  }
+  i exists only inside loop.
+
+- Shadowing in for
+  i := 100
+  for i := 0; i < 3; i++ {
+      fmt.Println(i)
+  }
+  fmt.Println(i) // 100
+
+- for with Multiple Variables
+  for i, j := 0, 5; i < j; i, j = i+1, j-1 {
+    fmt.Println(i, j)
+  }
+
+- Empty Parts in for
+  i := 0
+  for ; i < 5; ; {
+      fmt.Println(i)
+      i++
+  }
+  All parts optional.
+
+- Performance Notes (Interview)
+  for is very fast
+  No difference between for and range in most cases
+  range creates copies of values
+
+*** Go uses a single for loop that can act as a traditional loop, while loop, infinite loop, and range-based loop for iterating over collections. ***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
